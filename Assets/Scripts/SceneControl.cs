@@ -78,24 +78,5 @@ public class SceneControl : MonoBehaviour
         }
 
     }
-
-    // 화면에 클리어한 시간과 메시지를 표시
-    void OnGUI()
-    {
-        //switch (this.step)
-        //{
-        //    case STEP.PLAY:
-        //        GUI.color = Color.black;
-        //        // 경과 시간을 표시.
-        //        GUI.Label(new Rect(40.0f, 10.0f, 200.0f, 20.0f), "시간" + Mathf.CeilToInt(this.step_timer).ToString() + "초", guistyle);
-        //        GUI.color = Color.white;
-        //        break;
-        //    case STEP.CLEAR:
-        //        GUI.color = Color.black;
-        //        // 「☆클리어-！☆」라는 문자열을 표시.
-        //        GUI.Label(new Rect(Screen.width / 2.0f - 80.0f, 20.0f, 200.0f, 20.0f), "☆게임 끝-!☆", guistyle);
-        //        GUI.color = Color.white;
-        //        break;
-        //}
-    }
+    
 }
