@@ -15,6 +15,7 @@ public class BlockRoot : MonoBehaviour
     public SceneControl sceneControl;
 
     int combo = 0;
+    bool isInitial = false;
     public int Combo
     {
         get { return combo; }
@@ -98,6 +99,8 @@ public class BlockRoot : MonoBehaviour
                 color_index = Random.Range(0, (int)Block.COLOR.NORMAL_COLOR_NUM);
             }
         }
+
+        isInitial = true;
     }
 
     // BlockRoot.cs: BlockRoot class
@@ -126,6 +129,11 @@ public class BlockRoot : MonoBehaviour
     // 잡을 수 있는 상태의 블록을 잡는다.
     void Update()
     {
+        if(!isInitial)
+        {
+            return;
+        }
+
         Vector3 mouse_position; // 마우스 위치.
         this.unprojectMousePosition(out mouse_position, Input.mousePosition);
         // 가져온 마우스 위치를 하나의 Vector2로 모은다.
@@ -154,6 +162,7 @@ public class BlockRoot : MonoBehaviour
                     {
                         this.grabbed_block = block;
                         this.grabbed_block.beginGrab();
+                        SoundManager.Instance.PlaySound("t_se_block_grab", true);   
                     }
                     else
                     {
@@ -193,12 +202,17 @@ public class BlockRoot : MonoBehaviour
 
                 if (!checkConnection(grabbed_block) && !checkConnection(swap_target))
                 {
-                    StartCoroutine(process_failed_swap(grabbed_block, grabbed_block.slide_dir, swap_target));
+                    BlockControl block0 = grabbed_block;
+                    Block.DIR4 dir = grabbed_block.slide_dir;
+                    BlockControl block1 = swap_target;
+                    StartCoroutine(process_failed_swap(block0, dir, block1));
                 }
                 else
                 {
                     combo++;
-                    Debug.Log(combo);
+                    score_counter.addIgniteCount(1);
+                    score_counter.updateTotalScore();
+                    score_counter.clearIgniteCount();
                 }
 
                 this.grabbed_block = null; // 지금은 블록을 잡고 있지 않다.
@@ -232,31 +246,13 @@ public class BlockRoot : MonoBehaviour
                     ignite_count++; // 불붙은 개수를 증가.
                 }
             }
+
             if (ignite_count > 0)
-            { // 불붙은 개수가 0보다 크면.
-              // ＝한 군데라도 맞춰진 곳이 있으면.
-
+            { 
                 sceneControl.step_timer += 1.0f;
-                if (!this.is_vanishing_prev)
-                {
-                    // 연속 점화가 아니라면, 점화 횟수를 리셋.
-                    this.score_counter.clearIgniteCount();
-                }
-                // 점화 횟수를 증가.
                 this.score_counter.addIgniteCount(ignite_count);
-                // 합계 점수 갱신.
                 this.score_counter.updateTotalScore();
-
-                int block_count = 0; // 불붙는 중인 블록 수(다음 장에서 사용한다).
-                                     // 그리드 내의 모든 블록에 대해서 처리.
-                foreach (BlockControl block in this.blocks)
-                {
-                    if (block.isVanishing())
-                    { // 타는 중이면.
-                        block.rewindVanishTimer(); // 다시 점화!.
-                        block_count++;
-                    }
-                }
+                this.score_counter.clearIgniteCount();
             }
         }
 
@@ -310,6 +306,7 @@ public class BlockRoot : MonoBehaviour
                     }
                     this.blocks[x, y].beginRespawn(fall_start_y); // 블록 부활.
                     fall_start_y++;
+                    SoundManager.Instance.PlaySound("p_se_ship_restore", true);
                 }
             }
         } while (false);
@@ -352,6 +349,12 @@ public class BlockRoot : MonoBehaviour
     private bool is_has_falling_block()
     {
         bool ret = false;
+
+        if (blocks == null)
+        {
+            return ret;
+        }
+
         foreach (BlockControl block in this.blocks)
         {
             if(block.step == Block.STEP.FALL) {
@@ -527,14 +530,19 @@ public class BlockRoot : MonoBehaviour
         for(int i = 0; i < Block.BLOCK_NUM_Y; i++)
         {
             BlockControl block = blocks[startX, i];
-            block.rewindVanishTimer();
+            block.toVanishing();
         }
 
         for (int i = 0; i < Block.BLOCK_NUM_X; i++)
         {
             BlockControl block = blocks[i, startY];
-            block.rewindVanishTimer();
+            block.toVanishing();
         }
+        score_counter.addIgniteCount(Block.BLOCK_NUM_X + Block.BLOCK_NUM_Y - 1);
+        score_counter.updateTotalScore();
+        score_counter.clearIgniteCount();
+
+        SoundManager.Instance.PlaySound("r_se_star_explode", true);
     }
 
     public BlockControl getNextBlock(BlockControl block, Block.DIR4 dir)
@@ -587,6 +595,7 @@ public class BlockRoot : MonoBehaviour
     
     public void swapBlock(BlockControl block0, Block.DIR4 dir, BlockControl block1)
     {
+        SoundManager.Instance.PlaySound("t_se_block_change", true);
         // 각각의 블록 색을 기억해 둔다.
         Block.COLOR color0 = block0.color;
         Block.COLOR color1 = block1.color;

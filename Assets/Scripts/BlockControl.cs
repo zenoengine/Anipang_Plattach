@@ -447,7 +447,7 @@ public class BlockControl : MonoBehaviour
         }
         return (is_idle);
     }
-
+    
     // 낙하 시작 처리를 한다.
     public void beginFall(BlockControl start)
     {
@@ -464,7 +464,7 @@ public class BlockControl : MonoBehaviour
         this.next_step = Block.STEP.FALL;
 
         Block.COLOR color = this.block_root.selectBlockColor();
-            Debug.Log(block_root.Combo);
+
         if(block_root.Combo >= 10)
         {
             block_root.ResetCombo();

@@ -13,8 +13,7 @@ public class UIScoreText : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate() {
         mText.text = mScoreCounter.last.total_socre.ToString();
     }
-
 }

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ScoreCounter : MonoBehaviour {
+public class ScoreCounter : MonoBehaviour
+{
     public struct Count
     {
         public int ignite; // 연쇄 수
@@ -19,13 +20,13 @@ public class ScoreCounter : MonoBehaviour {
         this.last.total_socre = 0;
         this.guistyle.fontSize = 16;
 
-        best.total_socre = PlayerPrefs.GetInt("best_total_score", 0 );
+        best.total_socre = PlayerPrefs.GetInt("best_total_score", 0);
     }
 
     private void OnDestroy()
     {
         PlayerPrefs.SetInt("last_total_score", last.total_socre);
-        PlayerPrefs.SetInt("last_max_chain", last.ignite);
+        PlayerPrefs.SetInt("last_max_chain", best.ignite);
 
         if (last.total_socre > best.total_socre)
         {
@@ -50,8 +51,12 @@ public class ScoreCounter : MonoBehaviour {
     {
         this.last.ignite += count; // 연쇄 수에 count를 합산.
         this.update_score(); // 점수 계산.
-        string soundName = "t_se_ignit0" + last.ignite%11;
-        SoundManager.Instance.PlaySound(soundName,false);
+        string soundName = "t_se_ignit0" + last.ignite % 11;
+        if (last.ignite > best.ignite)
+        {
+            best.ignite = last.ignite;
+        }
+        SoundManager.Instance.PlaySound(soundName, false);
     }
     // 연쇄 횟수를 리셋
     public void clearIgniteCount()
@@ -61,7 +66,7 @@ public class ScoreCounter : MonoBehaviour {
     // 더해야 할 점수를 계산
     private void update_score()
     {
-        this.last.score = this.last.ignite * 10; // 점수 갱신.
+        this.last.score = (this.last.ignite + 1) * 100; // 점수 갱신.
     }
     // 합계 점수를 갱신
     public void updateTotalScore()
