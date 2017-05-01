@@ -18,8 +18,23 @@ public class ScoreCounter : MonoBehaviour {
         this.last.score = 0;
         this.last.total_socre = 0;
         this.guistyle.fontSize = 16;
+
+        best.total_socre = PlayerPrefs.GetInt("best_total_score", 0 );
     }
-    
+
+    private void OnDestroy()
+    {
+        PlayerPrefs.SetInt("last_total_score", last.total_socre);
+        PlayerPrefs.SetInt("last_max_chain", last.ignite);
+
+        if (last.total_socre > best.total_socre)
+        {
+            PlayerPrefs.SetInt("best_total_score", last.total_socre);
+        }
+
+        PlayerPrefs.Save();
+    }
+
 
     public void print_value(int x, int y, string label, int value)
     {
@@ -35,6 +50,8 @@ public class ScoreCounter : MonoBehaviour {
     {
         this.last.ignite += count; // 연쇄 수에 count를 합산.
         this.update_score(); // 점수 계산.
+        string soundName = "t_se_ignit0" + last.ignite%11;
+        SoundManager.Instance.PlaySound(soundName,false);
     }
     // 연쇄 횟수를 리셋
     public void clearIgniteCount()

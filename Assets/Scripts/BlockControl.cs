@@ -171,6 +171,7 @@ public class BlockControl : MonoBehaviour
                     explodeParticle.transform.position = this.transform.position;
                     explodeParticle.Stop();
                     explodeParticle.Play();
+                    SoundManager.Instance.PlaySound("r_se_click",false);
                     break;
                 case Block.STEP.RESPAWN:
                     // 색을 랜덤하게 선택하여 블록을 그 색으로 설정.

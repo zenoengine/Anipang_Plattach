@@ -118,10 +118,9 @@ public class BlockRoot : MonoBehaviour
     private BlockControl grabbed_block = null; // 잡은 블록.
     void Start()
     {
-        this.main_camera =
-        GameObject.FindGameObjectWithTag("MainCamera");
+        this.main_camera = GameObject.FindGameObjectWithTag("MainCamera");
         this.score_counter = this.gameObject.GetComponent<ScoreCounter>();
-        // 카메라로부터 마우스 커서를 통과하는 광선을 쏘기 위해서 필요
+        SoundManager.Instance.PlayMusic("bgm3_plt", true);
     }
     // 마우스 좌표와 겹치는지 체크한다.
     // 잡을 수 있는 상태의 블록을 잡는다.

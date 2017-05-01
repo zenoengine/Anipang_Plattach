@@ -15,7 +15,7 @@ public class SceneControl : MonoBehaviour
     };
     public STEP step = STEP.NONE; // 현재 상태.
     public STEP next_step = STEP.NONE; // 다음 상태.
-    public float step_timer = 60.0f; // 경과 시간.
+    public float step_timer = 60.0f; // 남은 시간.
     private float clear_time = 0.0f; // 클리어 시간.
     public GUIStyle guistyle; // 폰트 스타일.
 
