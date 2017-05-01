@@ -28,6 +28,7 @@ public class BlockRoot : MonoBehaviour
 
     public void create()
     {
+        PlayerPrefs.DeleteAll();
         this.level_control = new LevelControl();
         this.level_control.initialize(); // 레벨 데이터 초기화.
         this.level_control.loadLevelData(this.levelData); // 데이터 읽기.
